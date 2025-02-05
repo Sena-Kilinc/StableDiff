@@ -49,7 +49,13 @@ for epoch in range(5):  # Number of training epochs
         outputs = unet(sample=noise, timestep=timesteps, encoder_hidden_states=text_embeddings)
 
 
-        loss = outputs.loss  # Compute loss
+        # Predicted noise from U-Net
+        predicted_noise = outputs.sample  # The U-Net output is a denoised sample
+
+        # Compute MSE loss between predicted noise and actual noise
+        loss_fn = torch.nn.MSELoss()
+        loss = loss_fn(predicted_noise, noise)  # Compare predicted noise with original noise
+
 
         optimizer.zero_grad()
         loss.backward()
